@@ -15,6 +15,7 @@ init();
 
 const meshes = new Array();
 const boxes = new Array();
+const initPos = new Array();
 
 function init() {
   camera = new THREE.PerspectiveCamera(
@@ -62,24 +63,38 @@ function init() {
         let size = new THREE.Vector3();
         bbox.getSize(size);
 
-        mesh.position.x += idx * 1000;
-        console.log(mesh.position.x, idx);
+        mesh.position.x += 500 + idx * 1000;
+        
 
         // mesh.position.y += 250 - idx * 150;
         
         scene.add(mesh);
         meshes.push(mesh);
+        initPos.push(mesh.position.clone());        
 
         const box = new THREE.Mesh(
           new THREE.BoxGeometry(70, 70, 70),
           new THREE.MeshBasicMaterial({ map: texture2 })
         );
         box.position.y -= 60;
-        box.position.x = -150 + idx * 100;
+        box.position.x = 500 + idx * 100;
 
         boxes.push(box);
         scene.add(box);
 
+        if(idx === 2) {
+          const texture3 = texture.clone();
+          texture3.wrapS = THREE.RepeatWrapping; 
+          texture3.wrapT = THREE.RepeatWrapping;
+          texture3.repeat.set( 1, 1 ); 
+          const plane = new THREE.PlaneGeometry(1200, 1200, 2, 2);
+          const mesh = new THREE.Mesh(plane, new THREE.MeshBasicMaterial(
+            { map: texture3 }
+          ));          
+          mesh.material.side = THREE.DoubleSide;
+          mesh.position.z = 750;
+          scene.add(mesh);
+        }
         render();
       });
     }
@@ -113,19 +128,14 @@ function render() {
   renderer.render(scene, camera);
 }
 
-setInterval(() => {
-  console.log(boxes[0].position.x);
-}, 1000);
 
 let reverse = false;
 function animate() {
   requestAnimationFrame(animate);
   
   meshes.forEach((m) => {
-    m.position.x -= 5;    
+    m.position.x -= 5;        
   });
-  renderer.render(scene, camera);
-
 
   boxes.forEach(b => {
     b.rotateX(0.005);
@@ -138,10 +148,14 @@ function animate() {
 
   /* Reset */
   if (meshes[0].position.x < -4210) {
-    meshes.forEach((m, idx) => {
-      m.position.x = idx * 1000;
+    console.log('reset')
+    meshes.forEach((m: THREE.Mesh, idx) => {      
+      const {x,y,z} = initPos[idx];
+      m.position.set(x,y,z)      
     });
   }
+  renderer.render(scene, camera);
 }
 
-animate();
+setTimeout(animate, 1000);
+
