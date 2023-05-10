@@ -27,7 +27,7 @@ function init() {
   camera.position.set(0, 0, 750);  
   
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xffffff);
+  scene.background = new THREE.Color(0xeb3474);
 
   const loader = new FontLoader();
   loader.load("./helvetiker_regular.typeface.json", function (font: any) {
@@ -134,7 +134,7 @@ function animate() {
   requestAnimationFrame(animate);
   
   meshes.forEach((m) => {
-    m.position.x -= 5;        
+    m.position.x -= 3;        
   });
 
   boxes.forEach(b => {
@@ -157,5 +157,5 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-setTimeout(animate, 1000);
+setTimeout(animate, 2000);
 
