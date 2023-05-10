@@ -29,7 +29,7 @@ function init() {
   scene.background = new THREE.Color(0xffffff);
 
   const loader = new FontLoader();
-  loader.load("/helvetiker_regular.typeface.json", function (font: any) {
+  loader.load("./helvetiker_regular.typeface.json", function (font: any) {
     for (let [idx, text] of [
       "HAPPY",
       "MOTHERS",
@@ -47,7 +47,7 @@ function init() {
         curveSegments: 4,
       });
 
-      new THREE.TextureLoader().load(`/download-${idx}.png`, (texture) => {
+      new THREE.TextureLoader().load(`./download-${idx}.png`, (texture) => {
         const texture2 = texture.clone();
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(0.015, 0.015);
@@ -86,7 +86,8 @@ function init() {
   });
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
-  // renderer.setPixelRatio(window.devicePixelRatio);
+  /* @ts-ignore */
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
