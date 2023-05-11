@@ -9,7 +9,9 @@ import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 
 let camera: THREE.PerspectiveCamera,
   scene: THREE.Scene,
-  renderer: THREE.Renderer;
+  renderer: THREE.Renderer,
+  controls: OrbitControls;
+
 
 init();
 
@@ -106,9 +108,10 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  const controls = new OrbitControls(camera, renderer.domElement);
+  controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0, 0);
-  controls.update();
+  controls.update();  
+  controls.enabled = false;
 
   controls.addEventListener("change", render);
 
@@ -130,19 +133,22 @@ function render() {
 
 
 let reverse = false;
+let t = 0;
 function animate() {
-  requestAnimationFrame(animate);
-  
+  t = requestAnimationFrame(animate);
+
   meshes.forEach((m) => {
     m.position.x -= 3;        
   });
 
-  boxes.forEach(b => {
-    b.rotateX(0.005);
-    b.rotateZ(0.008)
-    b.position.x += (reverse ? 1 : -1) * 1
-  })  ;
-  if(boxes[0].position.x > 1000 || boxes[0].position.x < -1000) {
+  boxes.forEach((b,idx) => {
+    b.rotateX((idx % 2 ? -1 : 1) * 0.005);
+    b.rotateZ((idx % 2 ? 1 : -1) * 0.008);
+    b.position.x += (reverse ? 1 : -1) * 1;
+    b.position.z +=  Math.sin(idx + t / 100);
+    b.position.y += 0.5 *  Math.cos(idx + t / 100);
+  });
+  if(boxes[0].position.x > 500 || boxes[0].position.x < -1000) {
     reverse = !reverse;
   }
 
@@ -158,4 +164,16 @@ function animate() {
 }
 
 setTimeout(animate, 2000);
+
+let clickcount = 0;
+const _click = () => {
+  clickcount += 1;
+  if(clickcount > 10) {
+    controls.enabled = true;
+  }
+}
+
+
+window.ontouchend = _click;
+window.onclick = _click;
 
